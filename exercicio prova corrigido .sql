@@ -34,11 +34,12 @@ Descricao varchar(45),
 preco decimal(10,2)
 );
 
-create table ProdutoDesc(
+create table Carrinho(
 FkProduto int,
 foreign key (FkProduto) references produto(IdProduto),
 FkVenda int,
 foreign key (FkVenda) references venda(IdVenda),
+primary key (FKProduto,FkVenda),
 desconto decimal (10,2),
 quantidade int
 );
@@ -72,7 +73,7 @@ insert into venda values
 (null,1.21,'2022-10-21',3),
 (null,20.89,'2022-10-21',2);
 
-insert into ProdutoDesc values
+insert into Carrinho values
 (1,1,0.50,5),
 (2,2,12.50,1),
 (3,3,5.40,1),
@@ -84,7 +85,7 @@ select * from Cliente;
 select * from Endereco;
 select * from produto;
 select * from venda;
-select * from ProdutoDesc;
+select * from Carrinho;
 
 select * from Cliente
 join venda on idCliente = FkCliente_Venda; 
@@ -101,3 +102,27 @@ select c.nome,c.email,i.nome'indicador' from Cliente as c
 join Cliente as i on i.IdCliente = c.FkCliente_Indicador
 where i.idCliente ='2';
 
+select v.DataVenda,p.NomeProduto,c.quantidade from venda as v 
+join Carrinho as c on c.fkVenda = v.IdVenda
+join produto as p on p.IdProduto = c.FkProduto;
+
+select min(preco)'Menor valor',max(preco)'Maior valor' from produto;
+
+insert into Cliente values
+(null,'Luis gustavo','luis.gustavo@teste.com',null);
+
+select Cliente.nome, produto.NomeProduto, produto.Descricao, produto.preco, venda.IdVenda from Cliente
+left join venda on IdCliente = FkCliente_Venda
+left join produto on IdProduto = FkCliente_Venda;
+
+select sum(distinct preco) from produto;
+
+select SUM(preco)'Soma dos preços',
+ROUND(AVG(preco),2)'Media dos preços' from Produto;
+
+select count(preco)'quantidade de preços acima da média' from produto where preco >= (select avg(preco) from produto);
+
+select SUM(p.preco)'Soma dos preços'
+from produto as p 
+join carrinho as c on p.IdProduto = c.FkProduto 
+join venda as v on v.IdVenda = c.FkVenda where v.IdVenda = '2';
